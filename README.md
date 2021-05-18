@@ -101,7 +101,7 @@ dyld: Library not loaded: @rpath/XcodeKit.framework/Versions/A/XcodeKit
 ```
 如果成功运行会出现灰色Xcode
 ![011](./image/011.png)
-![012](012.png)
+![012](./image/012.png)
 用灰色的xcode打开文件或者项目在editor 菜单最下面就会有我们新建的插件了，在此之前我们修改下插件的菜单名称
 可以在info.plist中修改也可以在代码中自定义，我们直接修改代码中的返回值，修改返回值优先级高于info.plist,
 修改`SourceEditorExtension.swift`文件为以下内容
