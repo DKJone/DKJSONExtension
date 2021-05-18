@@ -135,7 +135,7 @@ class SourceEditorCommand: NSObject, XCSourceEditorCommand {
 如果需要修改文件内容直接修改`invocation.buffer.lines`就可以。这是个`[Sting]`类型的可变数组，可以在后面直接加，也可以替换某一行内容。
 为了获取主程序保存的配置我们也要为这个extension配置相同的APP group，方法同上。也使用相同的userdefault就可以取出主程序存储的配置了。
 
-这里具体解析json的逻辑就不仔细说明了，有兴趣的再次提供完整的源码[github]()或者[码云]()
+这里具体解析json的逻辑就不仔细说明了，有兴趣的查看供完整的源码
 
 最后一步发布我们制作的插件。选择主项目，然后xcode->product->archive 接下来和发布IOS应用一样可以选择开发者签名或者提交到APP store 或者内部测试。导出内容如图:
 ![014](./image/014.png)
