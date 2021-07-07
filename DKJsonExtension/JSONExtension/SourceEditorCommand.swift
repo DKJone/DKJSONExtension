@@ -39,20 +39,24 @@ class SourceEditorCommand: NSObject, XCSourceEditorCommand {
             //
 
             """
-            if UserDefaults.modelType == "HandyJSON" {
-                newLines = "import HandyJSON \n\n" + paraseJSON(dic: JSON(dict))
-            } else if UserDefaults.modelType == "Codable" {
-                newLines = "\n\n" + paraseJSON(dic: JSON(dict))
-            } else { // SwiftyJSON
-                newLines = "import SwiftyJSON \n\n" + paraseJSON(dic: JSON(dict))
+            if invocation.commandIdentifier == "parasePasteboard" {
+               newLines = ""
             }
-
-            invocation.buffer.lines.removeAllObjects()
+            if UserDefaults.modelType == "HandyJSON" {
+                newLines += "import HandyJSON \n\n" + paraseJSON(dic: JSON(dict))
+            } else if UserDefaults.modelType == "Codable" {
+                newLines += "\n\n" + paraseJSON(dic: JSON(dict))
+            } else { // SwiftyJSON
+                newLines += "import SwiftyJSON \n\n" + paraseJSON(dic: JSON(dict))
+            }
+            if invocation.commandIdentifier != "parasePasteboard" {
+                invocation.buffer.lines.removeAllObjects()
+            }
             newLines.enumerateLines { str, _ in
                 invocation.buffer.lines.add(str)
             }
         } else {
-            print("------\n not a json file\n----------\n")
+            print("------\n not a json \n----------\n")
         }
 
 //        invocation.buffer.lines.add("test - dkjone")
@@ -126,20 +130,20 @@ class SourceEditorCommand: NSObject, XCSourceEditorCommand {
                 let ivaName = maperedKeys.keys.contains(key) ? maperedKeys[key]! : key
                 switch dic[key].type {
                 case .number:
-                    allText += "\(ivaName) = \(dic[key].numberValue.description.contains(".") ? "dic[\"\(key)\"].floatValue" : "dic[\"\(key)\"].intValue")\n"
+                    allText += "\(ivaName) = \(dic[key].numberValue.description.contains(".") ? "json[\"\(key)\"].floatValue" : "json[\"\(key)\"].intValue")\n"
                 case .bool:
-                    allText += "\(ivaName) = dic[\"\(key)\"].boolValue\n"
+                    allText += "\(ivaName) = json[\"\(key)\"].boolValue\n"
                 case .null, .unknown, .string:
-                    allText += "\(ivaName) = dic[\"\(key)\"].stringValue\n"
+                    allText += "\(ivaName) = json[\"\(key)\"].stringValue\n"
                 case .dictionary:
                     allText += "\(ivaName) = \(uppercaseFirstCharacter(originString: key))(json:dic[\"\(key)\"])\n"
                 case .array:
                     if dic[key].arrayValue.isEmpty { allText += "\(ivaName) = [Any]()\n" } else {
                         switch dic[key, 0].type {
-                        case .number: allText += "\(ivaName) = \(dic[key].numberValue.description.contains(".") ? "dic[\"\(key)\"].arrayValue.map{$0.floatValue}" : "dic[\"\(key)\"].arrayValue.map{$0.intValue}")\n"
+                        case .number: allText += "\(ivaName) = \(dic[key].numberValue.description.contains(".") ? "json[\"\(key)\"].arrayValue.map{$0.floatValue}" : "json[\"\(key)\"].arrayValue.map{$0.intValue}")\n"
                         case .bool: allText += "\(ivaName) = dic[\"\(key)\"].arrayValue.map{$0.boolValue}\n"
                         case .null, .unknown, .string:
-                            allText += "\(ivaName) = dic[\"\(key)\"].arrayValue.map{$0.stringValue}\n"
+                            allText += "\(ivaName) = json[\"\(key)\"].arrayValue.map{$0.stringValue}\n"
                         case .dictionary:
                             allText += "\(ivaName) = dic[\"\(key)\"].arrayValue.map{\(uppercaseFirstCharacter(originString: key))(json:$0)}\n"
                         case .array: allText += "\(ivaName) = [Any]()\n"
